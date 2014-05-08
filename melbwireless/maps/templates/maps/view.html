@@ -6,7 +6,10 @@
 
 {% block head %}{{ block.super }}
 <link rel="stylesheet" href="{% static "leaflet/leaflet.css" %}" />
+<!--[if lte IE 8]><link rel="stylesheet" href="{% static "leaflet/leaflet.ie8.css" %}" /><![endif]-->
 <link rel="stylesheet" href="{% static "leaflet.fullscreen-1.1.0/Control.FullScreen.css" %}" />
+<link rel="stylesheet" href="{% static "Leaflet.iconlabel/Icon.Label.css" %}" />
+<link rel="stylesheet" href="{% static "Leaflet.iconlabel/Icon.Label.Default.css" %}" />
 {% endblock head %}
 
 {% block content %}
@@ -29,6 +32,7 @@
 {% block end %}
 <script src="{% static "leaflet/leaflet.js" %}"></script>
 <script src="{% static "leaflet.fullscreen-1.1.0/Control.FullScreen.js" %}"></script>
+<script src="{% static "Leaflet.iconlabel/Icon.Label.js" %}"></script>
 <script type="text/javascript">
 	var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'

@@ -58,6 +58,7 @@ MEDIA_URL = ''
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 #ADMIN_MEDIA_PREFIX = '/media/'
+STATIC_ROOT = os.path.expanduser('~/static/')
 STATIC_URL = '/static/'
 
 # Make this unique, and don't share it with anybody.
