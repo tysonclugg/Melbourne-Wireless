@@ -1,0 +1,239 @@
+/*
+ * Basic Body style - Background, etc
+ *
+ */
+body {
+	background-color:       white;
+	color:                  black;
+}
+
+/*
+ * Some Basic styles - text and images mostly
+ *
+ */
+p,td,tr,th, body{ 
+	font-family : 		Verdana,Arial,sans-serif; 
+	text-align: 		justify;
+}
+
+img { 
+	border: 		0; 
+}
+
+.smallText {
+	text-size:		small;
+}
+
+a:link 		{ text-decoration : none ; color : #0072D2; font-family: Verdana,Arial,sans-serif; }
+a:visited 	{ text-decoration : none ; color : #0072D2; font-family: Verdana,Arial,sans-serif; }
+a:active 	{ text-decoration : none ; color : #0072D2; font-family: Verdana,Arial,sans-serif; }
+a:hover 	{ text-decoration : none ; color : #0072D2; font-family: Verdana,Arial,sans-serif; }
+
+/*
+ * For text that should only be shown on non-CSS browsers
+ *
+ */
+.ahem {  
+	display:                none;  
+}
+
+/*
+ * H1 should only be used for the top heading of the page
+ *
+ */
+h1 {
+	background-color:	#006699;
+	color:			#fff;
+	width:			100%;
+	margin:			0;
+}
+
+/*
+ * A bar across that stretches across the whole page - primerally for the the header
+ *
+ */
+.bar {
+	color:			#fff;
+	background-color:	#000;
+	align:			right;
+	width:			100%;	
+	height:			20px;
+	text-align:		right;
+	font-size:		smaller;
+	margin:			0;
+	padding:		0px;
+}
+
+/*
+ * A Box to hold the navigation menu
+ *
+ */
+.nav {
+	padding:                10px 0 0 0;   
+	width:                  140px;
+	float:                  left;
+	margin:			5px;
+}
+
+/*
+ * The logo that appears just above the navigation menu
+ *
+ */
+
+.logo {
+	margin:			0;
+	border:			0;
+	padding:                10px 0 0 35px;
+	align:			center;
+}
+
+
+/*
+ * A Box to Hold all of the content of each page.
+ *
+ */
+
+.contentcontainer {
+	padding:                5px;
+//	position:		absolute;
+//	left:			160px;
+//	top:			60px;
+//	width:			75%;
+	display:		block;
+//	border:			1px #000000 solid;
+//	display: table; 
+//	margin-left: auto; 
+//	margin-right: auto;
+
+}
+
+/*
+ * A Box to hold the navigation tree at the top of each page
+ *
+ */
+
+.tree {
+        background-color:       transparent;
+}
+
+.tree a{
+        color:                  #036;
+ 	font:			10px;	
+	text-decoration:	none;       
+}
+
+
+/*
+ * A Box to Hold the actual content of each page.
+ *
+ */
+.content {
+	color:                  #000;
+	background-color:	#FFFFFF;
+	padding:		5px;
+	margin:			5px;
+	font:                   14px/14px helvetica, sans-serif;
+	line-height:		16px;
+	//display:		block;
+	border:			2px #006699 solid;
+	margin-top:		0px;
+	font-size:		small;
+	display: table; 
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+/*
+ * The navigation links
+ *
+ */
+a.navmenu, a.navmenu2 {
+	display:		block;
+	width:			105px;
+	text-decoration:        none;
+	background-color:	#fff;
+	font:                   bold 10px/12px verdana, sans-serif;
+	margin:			0 0 0 12px;
+	padding:		3px 3px 3px 10px;
+	color:			#000;
+	text-align:		left;
+	border:			1px solid #333;
+}
+
+a.navmenu2 {
+	border-top:		0;
+}
+
+
+/*
+ * A few link styles
+ *
+ */
+
+a.table_heading:link 	{ text-decoration : none ; color : black; font-weight : bold; font-family: Verdana,Arial,sans-serif; }
+a.table_heading:visited { text-decoration : none ; color : black; font-weight : bold; font-family: Verdana,Arial,sans-serif; }
+a.table_heading:active 	{ text-decoration : none ; color : black; font-weight : bold; font-family: Verdana,Arial,sans-serif; }
+a.table_heading:hover 	{ text-decoration : underline ; color : #DD6900; font-weight : bold; font-family: Verdana,Arial,sans-serif; }
+
+a.heading_link:link { font-size: 12px; color: #ffffff; text-decoration : none; }
+a.heading_link:active{ font-size: 12px; color: #ffffff; text-decoration : none; }
+a.heading_link:visited{ font-size: 12px; color: #ffffff; text-decoration : none; }
+a.heading_link:hover { font-size: 12px; color: #ffffff; text-decoration : underline; }
+
+
+/*
+ * Table Styles - Aim is to get rid of there and use CSS only
+ *
+ */
+td {
+	padding: 5px;
+	text-align: center;
+}
+
+.defaultTable   { background-color: #FFFFFF; border: 2px #006699 solid; font-size: smaller; margin-left: auto; margin-right: auto; }
+.nodeinfo       { TEXT-ALIGN: left; }
+.area_table     { TEXT-ALIGN: center; }
+.int_info       { TEXT-ALIGN: left; }
+.service        { TEXT-ALIGN: center; }
+.figure       { text-align: center; }
+.caption      { font-size: smaller; font-family: Verdana,Arial,sans-serif; text-align: center; }
+.desc         { font-style: italic; font-family: Verdana,Arial,sans-serif; font-size: smaller; text-align: center; }
+.operational  { color: #00C800; }
+.testing      { color: #F7E318; }
+.building     { color: #EA9F12; }
+.gathering    { color: #FA0000; }
+.interested   { color: #000000; }
+.som          { TEXT-ALIGN: center; font-size: smaller }
+.name         { TEXT-ALIGN: left; }
+.map          { color: red; }
+.heading1     { background-color: #006699;}
+.heading2     { background-color: #000000;}
+.major        { font-weight: bold; font-family: Verdana,Arial,sans-serif; background-color: 006699; color: black; }
+//.minor        { font-weight: bold; font-family: Verdana,Arial,sans-serif; background-color: e4e4e4; }
+.minor        { font-family: Verdana,Arial,sans-serif; background-color: e4e4e4; }
+.error        { background-color: white; font-size: larger; text-align: center; border: 2px red solid;}
+.success      { background-color: white; font-size: larger; text-align: center; border: 2px green solid;}
+
+
+/*
+ * Form Styles
+ *
+ */
+
+input,textarea, select {
+	color : #000000;
+	font: normal 11px Verdana, Arial, sans-serif;
+	border-color : #000000;
+}
+
+input.button {
+	background-color : #EFEFEF;
+	color : #000000;
+	font-size: 11px; font-family: Verdana, Arial, sans-serif;
+}
+
+.login {
+	align:			center;
+	text-align:		center;
+	padding:		3px 3px 3px 10px;
+}

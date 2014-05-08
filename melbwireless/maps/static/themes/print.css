@@ -1,0 +1,94 @@
+body {
+	background-color:       #fff;
+	color:                  #000;
+	margin:			0;
+}
+
+p,td,tr,th, body{ 
+	font-family : 		Tahoma;
+	text-align: 		justify;
+}
+
+/*
+ * Default Table Styles
+ *
+ */
+
+th	{ background-color: #f6f6f6; padding: 10px; border-top: 1px dotted #DFDFDF; border-bottom: 1px dotted #DFDFDF; border-left: 0px; border-right: 0px; text-align: center; }
+td	{ text-align: center; }
+
+/*
+ * Optional table styles
+ *
+ */
+th.minor	{ font-style: italic; padding: 3px; text-align: left; }
+th.centre 	{ text-align: center; }
+td.border 	{ border-bottom: 1px dotted #DFDFDF; }
+td.left		{ text-align: left; }
+td.right	{ text-align: right; }
+td.centre 	{ text-align: center; }
+td.justify	{ text-align: justify; }
+td.operational  { color: #00C800; }
+td.testing      { color: #F7E318; }
+td.building     { color: #EA9F12; }
+td.gathering    { color: #FA0000; }
+td.interested   { color: #000000; }
+.error        { background-color: white; font-size: larger; text-align: center; border: 2px red solid;}
+.success      { background-color: white; font-size: larger; text-align: center; border: 2px green solid;}
+
+.header {display: none; }
+
+.headerLeft { display: none; }
+.headerLogo { display: none; }
+
+/*
+ * For text that should only be shown on non-CSS browsers
+ *
+ */
+.ahem {  
+	display:                none;  
+}
+
+a:link 		{ text-decoration : none ; color : #286EC3; }
+a:visited	{ text-decoration : none ; color : #286EC3; }
+a:active 	{ text-decoration : none ; color : #286EC3; }
+a:hover 	{ text-decoration : underline ; color : #286EC3; }
+
+.content {width: 100%; margin: 0; padding: 0px; }
+.contentNav {display: none; }
+.contentMain { padding: 5px; display: block; }
+.contentMainNoRight { padding: 5px; display: block; }
+.contentRight {display: none; }
+
+/*
+ * The navigation links
+ *
+ */
+.navmenu, .navmenu2 {
+	dispaly: none;
+}
+
+hr { height: 1px; border-top: 1px dotted #DFDFDF; border-bottom: none; border-left: none; border-right: none; margin: 0px; }
+
+h5 { color: #000; margin:5px 0px 5px 0px; font-weight: normal; display: block; }
+h6 { color: #666; margin:5px 0px 5px 0px; font-weight: normal; }
+
+.footer { color: #666; }
+
+input.button {
+	background-color : #fff;
+	color : #286EC3;
+	border: 0;
+	font-size: 100%;
+	padding: 0px;
+}
+
+.tree {
+        display: none;
+}
+
+img { background-color:       transparent; }
+
+.newsDate {display: block; }
+.newsHeadline {display: block; }
+.newsStory {display: block; }

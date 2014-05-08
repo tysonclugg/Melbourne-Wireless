@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+{% load leaflet_js leaflet_css leaflet_map from leaflet_tags %}
+
+{% block title %}{{ node }} - {{ block.super }}{% endblock %}
+
+{% block head %}{{ block.super }}
+<link rel="stylesheet" href="{% static "leaflet/leaflet.css" %}" />
+<link rel="stylesheet" href="{% static "leaflet.fullscreen-1.1.0/Control.FullScreen.css" %}" />
+{% endblock head %}
+
+{% block content %}
+<h1>{{ node }}</h1>
+<div id="map" style="width: 600px; height: 400px"></div>
+{% comment %}{% leaflet_map "map" callback="window.map_init" fitextent=false %}{% endcomment %}
+<table>
+<caption>{{ node }}</caption>
+<tbody>
+<tr>
+	<th>Latitude</th><td>{{ node.latitude }}</td>
+</tr>
+<tr>
+	<th>Longitude</th><td>{{ node.longitude }}</td>
+</tr>
+</tbody>
+</table>
+{% endblock %}
+
+{% block end %}
+<script src="{% static "leaflet/leaflet.js" %}"></script>
+<script src="{% static "leaflet.fullscreen-1.1.0/Control.FullScreen.js" %}"></script>
+<script type="text/javascript">
+	var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+	});
+	var Nokia_satelliteYesLabelsDay = L.tileLayer(
+		'http://{s}.maptile.lbs.ovi.com/maptiler/v2/maptile/newest/hybrid.day/{z}/{x}/{y}/256/png8?token={devID}&app_id={appID}', {
+		attribution: 'Map &copy; <a href="http://developer.here.com">Nokia</a>, Data &copy; NAVTEQ 2012',
+		subdomains: '1234',
+		devID: 'xyz',
+		appID: 'abc'
+	});
+	var Thunderforest_Landscape = L.tileLayer('http://{s}.tile3.opencyclemap.org/landscape/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+	});
+
+	var nodes = L.layerGroup(), nodeMarkers = {};{% for other in nodes %}
+	nodeMarkers["{{ other.id }}"] = L.marker(
+		[{{ other.latitude }}, {{ other.longitude }}],
+		{
+			title: "{{ other }}"
+		}
+	).addTo(nodes).bindPopup("<h4>{{ other }}</h4><table><tbody><tr><th>Latitude</th><td>{{ other.latitude }}</td></tr><tr><th>Longitude</th><td>{{ other.longitude }}</td></tr></tbody></table>");{% endfor %}
+	// Initialise map
+	var map = L.map('map', {
+		center: [{{ node.latitude }}, {{ node.longitude }}],
+		zoom: 13,
+		layers: [OpenStreetMap_Mapnik, nodes]
+	});
+	L.control.fullscreen().addTo(map);
+
+	L.control.layers(
+		{ // basemaps
+			'Roads': OpenStreetMap_Mapnik,
+			'Satellite': Nokia_satelliteYesLabelsDay,
+			'Landscape': Thunderforest_Landscape
+		},
+		{ // overlays
+			'Nodes': nodes,
+			'Links': L.multiPolyline(
+				[{% for link in node.links %}
+					[
+						[{{ link.interface_1.node.latitude }}, {{ link.interface_1.node.longitude }}],
+						[{{ link.interface_2.node.latitude }}, {{ link.interface_2.node.longitude }}]
+					]{% if not forloop.last %},{% endif %}{% endfor %}
+				]
+			),
+		}
+	).addTo(map);
+	nodeMarkers["{{ node.id }}"].openPopup();
+</script>
+{% endblock %}

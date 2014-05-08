@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>{% load static from staticfiles %}
+{% block head %}
+<title>{% block title %}Melbourne Wireles{% endblock %}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" type="text/css" media="screen" href="{% static "themes/amelia.css" %}" /> 
+	<link rel="stylesheet" type="text/css" media="print" href="{% static "themes/print.css" %}" /> 
+	<link rel="shortcut icon" href="/favicon.ico" />
+
+	<script type="text/javascript">
+		<!--
+		function popup(url, name, width, height)
+		{
+		settings=
+		"toolbar=no,location=no,directories=no,"+
+		"status=no,menubar=no,scrollbars=yes,"+
+		"resizable=yes,width="+width+",height="+height;
+
+		mwWindow=window.open("http://"+url,name,settings);
+		mwWindow.focus();
+		}
+		//-->
+	</script>
+        <!-- start map node type selector - added by meverest, mw@freenet.net.au, node KBN -->
+        <script src="{% static "js/map_nodetype_selector.js" %}" type="text/javascript"></script>
+        <!-- end map node type selector - added by meverest, mw@freenet.net.au, node KBN -->
+{% comment %}
+        <script src="//maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyAu7jwQV1YkJ4Z4XhP_EMo5gEsM2jlW3Uw" type="text/javascript"></script>
+	<script type="text/javascript">
+                // define map variables here so they are accessible in global scope
+                // my meverest, mw@freenet.net.au, node KBN
+                var map = null;
+                var geoXmlMap = null;
+
+                function load() {
+			if (GBrowserIsCompatible()) {
+				map = new GMap2(document.getElementById("map"));
+				map.setCenter(new GLatLng(<?=$node['latitude']?>, <?=$node['longitude']?>),16);
+				map.addControl(new GSmallMapControl());
+				map.addMapType(G_PHYSICAL_MAP);
+				map.addControl(new GMapTypeControl());
+				//var point = new GLatLng(<?=$node['latitude']?>, <?=$node['longitude']?>);
+				geoXmlMap = new GGeoXml("http://<?php echo $_SERVER['SERVER_NAME'];?>/maps/map.kml?<?php echo $filter_string;?>");
+				map.addOverlay(geoXmlMap);
+			}
+		}
+	</script>
+{% endcomment %}
+{% endblock head %}
+</head>
+
+<body>
+
+<div class="header">
+	<div class="headerLogo">
+		&nbsp;
+	</div>
+	<div class="headerLeft">
+		&nbsp;
+	</div>
+</div>
+
+
+	<div class="contentMain">
+
+	<div class="tree">Stuff</div>
+
+	<hr />
+{% block content %}{% endblock %}
+
+<!-- begin footer -->
+	<div class="footer">
+		<hr />
+		&copy; Melbourne Wireless Inc. 2014{% if request.META.SERVER_PORT == "8000" %}
+		<br />{{ request.resolver_match }}
+		<br /><a href="{% load oldurl from oldsite %}{% oldurl %}">View on site</a>{% endif %}
+	</div>
+<!-- end footer -->
+</div>
+
+<div class="contentNav">
+
+<!-- begin menu -->
+	<ul>
+	<li> No menu here...</li>
+	</ul>
+	<br /><br />
+<!-- end menu -->
+
+<!-- begin login -->
+	<div class="login">
+			<form action="" method="post">			
+				<h6>Username</h6>
+				<input type="text" name="username" size="15" />
+				<h6>Password</h6>
+				<input type="password" size="15" name="password" alt="Password" /><br />
+				<input type="checkbox" name="remember" />&nbsp;Remember me. <br />
+				<img src="{% static "images/bullet.gif" %}" alt="&gt;" /><input type="submit" value="login" class="button" />
+				<br /><br />
+				<img src="{% static "images/bullet.gif" %}" alt="&gt;" /> <a href="/users/forgot">forgotten password?</a><br />
+			</form>
+</div>
+<!-- end login -->
+
+<!-- begin userstats -->
+    <div class="userstats">
+        currently <em><?=usersLoggedIn()?></em> users online
+    </div>
+<!-- end userstats -->
+
+<!-- begin nodestats -->
+    <div class="nodestats">
+        <table>
+            <tr><th colspan="2">Node Statistics</th></tr>
+            <tr><td class="<?= $status ?>"><?= $status ?></td><td style="text-align: right;"><?= $count ?></td></tr>
+        </table>
+    </div>
+<!-- end nodestats -->
+
+<!-- begin search -->
+	<div class="search">
+		<form action="http://www.google.com.au/cse" id="cse-search-box">
+			<h6>Search</h6>
+			<input type="text" name="q" size="15" alt="Search" /><br />
+		        <input type="hidden" name="cx" value="partner-pub-5038018055168691:cr64udi26v1" />
+			<input type="hidden" name="ie" value="ISO-8859-1" />
+			<input type="submit" name="sa" value="google >>" />
+		</form>
+	</div>
+<!-- end search -->
+
+</div>
+
+<!-- begin right pane -->
+    <div class="contentRight">
+    More stuff...
+    <br />
+    </div>
+<!-- end right pane -->
+
+<!-- this is the end... -->
+{% block end %}{% endblock %}
+<!-- ...my only friend. -->
+</body>
+</html>
