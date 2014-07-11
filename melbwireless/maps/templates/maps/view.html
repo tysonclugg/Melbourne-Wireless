@@ -1,22 +1,29 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
+{% load cdn from djangocdn %}
 {% load leaflet_js leaflet_css leaflet_map from leaflet_tags %}
 
 {% block title %}{{ node }} - {{ block.super }}{% endblock %}
 
 {% block head %}{{ block.super }}
-<link rel="stylesheet" href="{% static "leaflet/leaflet.css" %}" />
-<!--[if lte IE 8]><link rel="stylesheet" href="{% static "leaflet/leaflet.ie8.css" %}" /><![endif]-->
-<link rel="stylesheet" href="{% static "Leaflet.fullscreen/leaflet.fullscreen.css" %}" />
-<link rel="stylesheet" href="{% static "Leaflet.iconlabel/Icon.Label.css" %}" />
-<link rel="stylesheet" href="{% static "Leaflet.iconlabel/Icon.Label.Default.css" %}" />
+<link rel="stylesheet" href="{% cdn "leaflet/leaflet.css" %}">
+<!--[if lte IE 8]><link rel="stylesheet" href="{% cdn "leaflet/leaflet.ie8.css" %}"><![endif]-->
+<link rel="stylesheet" href="{% cdn "leaflet.awesome-markers/leaflet.awesome-markers.css" %}">
+<link rel="stylesheet" href="{% cdn "leaflet.fullscreen/leaflet.fullscreen.css" %}">
+<link rel="stylesheet" href="{% cdn "leaflet.label/leaflet.label.css" %}">
+<link href='{% cdn "leaflet.locatecontrol/L.Control.Locate.css" %}' rel='stylesheet' />
+<!--[if lt IE 9]>
+  <link href='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.21.0/L.Control.Locate.ie.css' rel='stylesheet' />
+<![endif]-->
 {% endblock head %}
 
 {% block content %}
-<h1>{{ node }}</h1>
-<div id="map" style="width: 600px; height: 400px"></div>
+<div class="page-header">
+<h3>{{ node }}</h3>
+</div>
+<div id="map" style="width: 50em; height: 35em"></div>
 {% comment %}{% leaflet_map "map" callback="window.map_init" fitextent=false %}{% endcomment %}
-<table>
+<table class="noth">
 <caption>{{ node }}</caption>
 <tbody>
 <tr>
@@ -30,9 +37,12 @@
 {% endblock %}
 
 {% block end %}
-<script src="{% static "leaflet/leaflet.js" %}"></script>
-<script src="{% static "Leaflet.fullscreen/Leaflet.fullscreen.js" %}"></script>
-<script src="{% static "Leaflet.iconlabel/Icon.Label.js" %}"></script>
+<script src="{% cdn "leaflet/leaflet.js" %}"></script>
+<script src="{% cdn "leaflet.awesome-markers/leaflet.awesome-markers.js" %}"></script>
+<script src="{% cdn "leaflet.fullscreen/Leaflet.fullscreen.js" %}"></script>
+<script src="{% cdn "leaflet.label/leaflet.label.js" %}"></script>
+<script src="{% cdn "leaflet.locatecontrol/L.Control.Locate.js" %}"></script>
+<script src="//rawgit.com/ismyrnow/Leaflet.groupedlayercontrol/gh-pages/src/leaflet.groupedlayercontrol.js"></script>
 <script type="text/javascript">
 	var OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
@@ -44,41 +54,223 @@
 		devID: 'xyz',
 		appID: 'abc'
 	});
-	var Thunderforest_Landscape = L.tileLayer('http://{s}.tile3.opencyclemap.org/landscape/{z}/{x}/{y}.png', {
+	var Thunderforest_Landscape = L.tileLayer('http://{s}.tile.thunderforest.com/landscape/{z}/{x}/{y}.png', {
+		subdomains: 'abc',
 		attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
 	});
+	var Thunderforest_Outdoors = L.tileLayer('http://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png', {
+		subdomains: 'abc',
+		attribution: '&copy; <a href="http://www.opencyclemap.org">OpenCycleMap</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+	});
+	var Mapquest_OSM_Tiles = L.tileLayer(
+		'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg',
+		{
+			subdomains: '1234',
+			attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">',
+		}
+	);
+	var Mapquest_Open_Arial_Tiles = L.tileLayer(
+		'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg',
+		{
+			subdomains: '1234',
+			attribution: 'Tiles Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"> Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
+		}
+	);
 
-	var nodes = L.layerGroup(), nodeMarkers = {};{% for other in nodes %}
+	var interestedIcon = L.icon({
+		iconUrl: '{% static "maps/interested.png" %}',
+		iconSize: [13, 16],
+		iconAnchor: [7, 16],
+		shadowUrl: '{% static "maps/shadow.png" %}',
+		shadowSize: [14, 10],
+		shadowAnchor: [1, 10],
+		popupAnchor: [0, -16]
+	});
+	var gatheringIcon = L.icon({
+		iconUrl: '{% static "maps/gathering.png" %}',
+		iconSize: [13, 16],
+		iconAnchor: [7, 16],
+		shadowUrl: '{% static "maps/shadow.png" %}',
+		shadowSize: [14, 10],
+		shadowAnchor: [1, 10],
+		popupAnchor: [0, -16]
+	});
+	var buildingIcon = L.icon({
+		iconUrl: '{% static "maps/building.png" %}',
+		iconSize: [13, 16],
+		iconAnchor: [7, 16],
+		shadowUrl: '{% static "maps/shadow.png" %}',
+		shadowSize: [14, 10],
+		shadowAnchor: [1, 10],
+		popupAnchor: [0, -16]
+	});
+	var testingIcon = L.icon({
+		iconUrl: '{% static "maps/testing.png" %}',
+		iconSize: [13, 16],
+		iconAnchor: [7, 16],
+		shadowUrl: '{% static "maps/shadow.png" %}',
+		shadowSize: [14, 10],
+		shadowAnchor: [1, 10],
+		popupAnchor: [0, -16]
+	});
+	var operationalIcon = L.icon({
+		iconUrl: '{% static "maps/operational.png" %}',
+		iconSize: [13, 16],
+		iconAnchor: [7, 16],
+		shadowUrl: '{% static "maps/shadow.png" %}',
+		shadowSize: [14, 10],
+		shadowAnchor: [1, 10],
+		popupAnchor: [0, -16]
+	});
+	var glyph = 'circle';
+	operationalIcon = L.AwesomeMarkers.icon({ markerColor: 'green',
+		prefix: 'fa', icon: glyph
+	});
+	testingIcon = L.AwesomeMarkers.icon({ markerColor: 'blue',
+		prefix: 'fa', icon: glyph
+	});
+	buildingIcon = L.AwesomeMarkers.icon({ markerColor: 'orange',
+		prefix: 'fa', icon: glyph
+	});
+	gatheringIcon = L.AwesomeMarkers.icon({ markerColor: 'red',
+		prefix: 'fa', icon: glyph
+	});
+	interestedIcon = L.AwesomeMarkers.icon({ markerColor: 'darkred',
+		prefix: 'fa', icon: glyph
+	});
+
+	function nodeDragEnd(e) {
+		this.openPopup();
+	}
+	function nodePopupOpen(e) {
+		var n=this, loc=n.getLatLng();
+		e.popup.setContent(
+			'<a href="'+n.options.url+'">'+n.options.title+'</a><br><table class="noth"><tbody><tr><th>Latitude</th><td>'+loc.lat+'</td></tr><tr><th>Longitude</th><td>'+loc.lng+'</td></tr></tbody></table>'
+		).update()
+	}
+
+	var
+		interestedNodes = L.layerGroup(),
+		gatheringNodes = L.layerGroup(),
+		buildingNodes = L.layerGroup(),
+		testingNodes = L.layerGroup(),
+		operationalNodes = L.layerGroup(),
+		interestedNodeLinks = L.layerGroup(),
+		gatheringNodeLinks = L.layerGroup(),
+		buildingNodeLinks = L.layerGroup(),
+		testingNodeLinks = L.layerGroup(),
+		operationalNodeLinks = L.layerGroup(),
+		interestedLinks = L.layerGroup(),
+		gatheringLinks = L.layerGroup(),
+		buildingLinks = L.layerGroup(),
+		testingLinks = L.layerGroup(),
+		operationalLinks = L.layerGroup(),
+		nodeMarkers = {};
+	{% for other in nodes %}
 	nodeMarkers["{{ other.id }}"] = L.marker(
 		[{{ other.latitude }}, {{ other.longitude }}],
 		{
-			title: "{{ other }}"
+			title: "{{ other }}",
+			url: "{{ other.get_absolute_url }}",
+			riseOnHover: true,{% if other.id = node.id %}
+			draggable: true,{% endif %}
+			icon: {{ other.status }}Icon
 		}
-	).addTo(nodes).bindPopup("<h4>{{ other }}</h4><table><tbody><tr><th>Latitude</th><td>{{ other.latitude }}</td></tr><tr><th>Longitude</th><td>{{ other.longitude }}</td></tr></tbody></table>");{% endfor %}
+	).addTo(
+		{{ other.status }}Nodes
+	//).bindLabel(
+	//	'{{ other }}'
+	).bindPopup(
+		''
+	).on(
+		'dragend', nodeDragEnd
+	).on(
+		'popupopen', nodePopupOpen
+	);{% endfor %}
+	{% for link in node.links %}
+	L.polyline({% with a=link.interface_1.node b=link.interface_2.node %}
+		[[{{ a.lat }}, {{ a.lng }}], [{{ b.lat }}, {{ b.lng }}]],
+		{weight: 3, color:'{{ link.get_status_color }}'}
+	).bindLabel(
+		'{{ link }}'
+	).addTo({{ link.status }}NodeLinks);{% endwith %}{% endfor %}
+	{% for link in node.other_links %}
+	L.polyline({% with a=link.interface_1.node b=link.interface_2.node %}
+		[[{{ a.lat }}, {{ a.lng }}], [{{ b.lat }}, {{ b.lng }}]],
+		{weight: 3, color:'{{ link.get_status_color }}'}
+	).bindLabel(
+		'{{ link }}'
+	).addTo({{ link.status }}Links);{% endwith %}{% endfor %}
+	// Reset control
+	var ResetControl = L.Control.extend({
+		options: {
+			position: 'topleft'
+		},
+		initialize: function(foo, options) {
+			L.Util.setOptions(this, options);
+		},
+		onAdd: function(map) {
+			var bar = L.DomUtil.create('div', 'leaflet-control-reset leaflet-bar');
+			var part = L.DomUtil.create('a', 'leaflet-control-part', bar);
+			part.href = '#';
+			part.title = 'Reset';
+			part.onclick = function() {
+				map.setView(nodeMarkers['{{ node.id }}'].getLatLng(), 13);
+			};
+			return bar;
+		}
+	});
 	// Initialise map
 	var map = L.map('map', {
 		center: [{{ node.latitude }}, {{ node.longitude }}],
 		zoom: 13,
-		layers: [OpenStreetMap_Mapnik, nodes]
+		layers: [
+			Thunderforest_Landscape,
+			operationalNodes,
+			testingNodes,
+			operationalNodeLinks,
+			testingNodeLinks
+		]
 	});
+	L.control.locate({
+		locateOptions: {
+			enableHighAccuracy: true
+		}
+	}).addTo(map);
 	L.control.fullscreen().addTo(map);
+	//map.addControl(new ResetControl('reset'));
 
-	L.control.layers(
+	L.control.groupedLayers(
 		{ // basemaps
+			'Landscape': Thunderforest_Landscape,
+			//'Outdoors': Thunderforest_Outdoors,
 			'Roads': OpenStreetMap_Mapnik,
-			'Satellite': Nokia_satelliteYesLabelsDay,
-			'Landscape': Thunderforest_Landscape
+			'Satellite': Nokia_satelliteYesLabelsDay //,
+			//'MapQuest-OSM': Mapquest_OSM_Tiles,
+			//'MapQuest Open Arial': Mapquest_Open_Arial_Tiles
 		},
 		{ // overlays
-			'Nodes': nodes,
-			'Links': L.multiPolyline(
-				[{% for link in node.links %}
-					[
-						[{{ link.interface_1.node.latitude }}, {{ link.interface_1.node.longitude }}],
-						[{{ link.interface_2.node.latitude }}, {{ link.interface_2.node.longitude }}]
-					]{% if not forloop.last %},{% endif %}{% endfor %}
-				]
-			),
+			'Nodes': {
+				'Operational': operationalNodes,
+				'Testing': testingNodes,
+				'Building': buildingNodes,
+				'Gathering': gatheringNodes,
+				'Interested': interestedNodes
+			},
+			'Links with {{ node.id }}': {
+				'Operational': operationalNodeLinks,
+				'Testing': testingNodeLinks /*,
+				'Building': buildingNodeLinks,
+				'Gathering': gatheringNodeLinks,
+				'Interested': interestedNodeLinks */
+			},
+			'Links without {{ node.id }}': {
+				'Operational': operationalLinks,
+				'Testing': testingLinks /*,
+				'Building': buildingLinks,
+				'Gathering': gatheringLinks,
+				'Interested': interestedLinks */
+			}
 		}
 	).addTo(map);
 	nodeMarkers["{{ node.id }}"].openPopup();

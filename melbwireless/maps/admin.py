@@ -9,7 +9,7 @@ class Member(admin.ModelAdmin):
 
 class User(admin.ModelAdmin):
     search_fields = ('id', 'name', 'email')
-    list_display = ('id', 'name', 'email')
+    list_display = ('id', 'name', 'email', 'registered', 'email_confirmed', 'last_seen')
     list_filter = ('registered', 'email_confirmed', 'last_seen', 'failed_attempts', 'adv')
 
 class NodeIp(admin.ModelAdmin):

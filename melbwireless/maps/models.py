@@ -14,6 +14,7 @@ from localflavor.au.au_states import STATE_CHOICES
 from localflavor.au.forms import AUPostCodeField, AUPhoneNumberField
 
 from django.contrib.auth import models as auth
+from django.core.urlresolvers import reverse
 import hashlib
 
 CARD_STATUS_CHOICES = (
@@ -238,12 +239,21 @@ NODE_STATUS_TESTING = 'testing'
 NODE_STATUS_OPERATIONAL = 'operational'
 
 NODE_STATUS_CHOICES = (
+    # ordering must be from lowest to highest
     (NODE_STATUS_INTERESTED, 'Interested'),
     (NODE_STATUS_GATHERING, 'Gathering'),
     (NODE_STATUS_BUILDING, 'Building'),
     (NODE_STATUS_TESTING, 'Testing'),
     (NODE_STATUS_OPERATIONAL, 'Operational'),
 )
+
+NODE_STATUS_COLORS = {
+    NODE_STATUS_INTERESTED: 'darkred',
+    NODE_STATUS_GATHERING: 'red',
+    NODE_STATUS_BUILDING: 'orange',
+    NODE_STATUS_TESTING: '#1E90FF',
+    NODE_STATUS_OPERATIONAL: 'green',
+}
 
 class Node(models.Model):
     id = models.CharField(max_length=9, primary_key=True)
@@ -263,12 +273,20 @@ class Node(models.Model):
     def __unicode__(self):
         return u'%s: %s - %s (%s)' % (self.id, self.name, self.suburb, self.owner_id)
     def get_absolute_url(self):
-        return 'http://www.melbournewireless.org.au/maps/view?id=%s' % self.id
+        return '/maps/node/{0}/'.format(self.id.upper())
+        return reverse('maps_node_view', args=[self.id])
     class Meta:
         db_table = u'nodes'
         ordering = ['id']
+
+    # shorthand property names
+    lat = property(lambda self: self.latitude)
+    lng = property(lambda self: self.longitude)
+    alt = property(lambda self: self.altitude)
+
     @property
     def links(self):
+        '''Returns queryset of all links related to this node'''
         return Link.objects.filter(
             models.Q(
                 interface_1__node = self,
@@ -276,7 +294,17 @@ class Node(models.Model):
                 interface_2__node = self,
             )
         )
-        return self.links_1.all() | self.links_2.all()
+
+    @property
+    def other_links(self):
+        '''Returns queryset of all links NOT related to this node'''
+        return Link.objects.exclude(
+            models.Q(
+                interface_1__node = self,
+            ) | models.Q(
+                interface_2__node = self,
+            )
+        )
 
 class NodeScore(models.Model):
     node = models.OneToOneField('Node', primary_key=True, db_column='node')
@@ -402,10 +430,36 @@ class Link(models.Model):
     interface_2 = models.ForeignKey('Interface', related_name='links_2', db_column='interface_2')
     link_class = models.CharField(max_length=24, choices=LINK_CLASS_CHOICES, db_column='class', blank=True) # Field renamed because it was a Python reserved word. Field name made lowercase.
     def __unicode__(self):
-        return u'%d: %s - %s' % (self.id, self.interface_1, self.interface_2)
+        return u'{0}: {1[0]} - {1[1]}'.format(
+            self.id,
+            sorted([
+                self.interface_1,
+                self.interface_2,
+            ],
+            cmp=lambda a, b: cmp(a.node.id, b.node.id)),
+        )
+
     class Meta:
         db_table = u'nodes_links'
         ordering  = ['interface_1', 'interface_2']
+
+    def status(self):
+        s1, s2 = self.interface_1.node.status, self.interface_2.node.status
+        for (status, description) in NODE_STATUS_CHOICES:
+            if status in (s1, s2):
+                return status
+
+    def get_status_display(self):
+        return dict(NODE_STATUS_CHOICES)[self.status()]
+
+    def get_status_color(self):
+        return NODE_STATUS_COLORS[self.status()]
+
+NODE_STATUS_INTERESTED = 'interested'
+NODE_STATUS_GATHERING = 'gathering'
+NODE_STATUS_BUILDING = 'building'
+NODE_STATUS_TESTING = 'testing'
+NODE_STATUS_OPERATIONAL = 'operational'
 
 SERVICE_TYPE_DHCP = 'dhcp'
 SERVICE_TYPE_DNS = 'dns'

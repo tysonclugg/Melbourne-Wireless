@@ -106,9 +106,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     #'django.contrib.sites',
     'django.contrib.staticfiles',
+    'bootstrap_admin',
     'django.contrib.admin',
     'django.contrib.gis',
     'django_extensions',
+    'django_cdn',
     'leaflet',
     'melbwireless.maps',
     'melbwireless.oldsite',
@@ -120,3 +122,23 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
+CDN_PREFIXES = {
+    'bootstrap': \
+        '//netdna.bootstrapcdn.com/bootstrap/3.1.1/',
+    'font-awesome': \
+        '//netdna.bootstrapcdn.com/font-awesome/4.1.0/',
+    'leaflet': \
+        '//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/',
+    'leaflet.fullscreen': \
+        '//rawgit.com/Leaflet/Leaflet.fullscreen/v0.0.2/dist',
+    'leaflet.label': \
+        '//rawgit.com/Leaflet/Leaflet.label/0.2.1/dist',
+    'leaflet.locatecontrol': \
+        #'//rawgit.com/domoritz/leaflet-locatecontrol/gh_pages/src',
+        '//rawgithub.com/domoritz/leaflet-locatecontrol/v0.27.0/src',
+        #'//domoritz.github.io/leaflet-locatecontrol/src',
+    'leaflet.awesome-markers': \
+        #'//rawgithub.com/lvoogdt/Leaflet.awesome-markers/v2.0.2/dist',
+        '//cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.0',
+}
